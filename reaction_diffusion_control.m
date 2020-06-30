@@ -2,18 +2,21 @@
 % Control of Reaction Diffusion Equation
 
 %Start Parameter
-lambda = 25;
+lambda = 15;
+noise = 0.2; %uniform noise [-noise, noise]
 control_on = true;
 plot_temp = true;
-plot_delta_t = 0.01; %must be >=0.002
+plot_delta_t = 0.02; %must be >=0.002
 plot_gain_kernel = false;
+plot_pause = 0.5; 
 %End Parameter
 
 delta_x = 0.01;
 delta_t = 0.002;
 x = 0:delta_x:1;
 t = 0:delta_t:1;
-u0 = sin(pi*x) + (0.5 - rand(1, length(x)) / 5);
+noise_div = 0.5 / noise;
+u0 = sin(pi*x) + (0.5 - rand(1, length(x)) / noise_div);
 A = full(gallery('tridiag',length(x),1,-2,1)) / delta_x^2;
 A = A + eye(length(x)) * lambda;
 A(1,:) = 0;
@@ -51,7 +54,7 @@ if plot_temp
         p = plot(x, u_be(:,i));
         ylim([min(u_be(:)) max(u_be(:))])
         title("Lambda=" + lambda + " and time=" + i*delta_t)
-        pause(0.5);
+        pause(plot_pause);
         if ~ishghandle(p)
             return
         end
